@@ -3,12 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TheSimpPlayerController.h"
 #include "GameFramework/Pawn.h"
 #include "PlayerPawn.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
 class UPawnMovementComponent;
+class UPlayerStateMachineComponent;
 
 UCLASS()
 class THESIMP_API APlayerPawn : public APawn
@@ -40,6 +42,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	UPawnMovementComponent* MovementComponent;
 
+	UPROPERTY(VisibleAnywhere)
+	UPlayerStateMachineComponent* StateMachineComponent;
+
 	UPROPERTY(EditDefaultsOnly)
 	float MovementSpeed = 100.f;
 
@@ -49,4 +54,7 @@ private:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 	void RotateRight(float Value);
+	
+	void Interact();
+	ATheSimpPlayerController* GetPlayerController() const;
 };
