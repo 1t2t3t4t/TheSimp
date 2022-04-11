@@ -1,15 +1,10 @@
 ﻿#include "FPlayState.h"
 
-void FPlayState::SetUpInput(UInputComponent* Input)
+void FPlayState::Click(const FHitResult Result, const FPlayerContext Context)
 {
 	
 }
 
-void FPlayState::Click(const FHitResult Result)
-{
-	
-}
-
-void FPlayState::InteractWorld(const FHitResult Result)
+void FPlayState::InteractWorld(const FHitResult Result, const FPlayerContext Context)
 {
 }

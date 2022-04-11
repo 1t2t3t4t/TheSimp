@@ -41,7 +41,6 @@ void APlayerControl::BeginPlay()
 void APlayerControl::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -95,9 +94,14 @@ void APlayerControl::Interact()
 		const bool bHit = PlayerController->GetHitResultUnderCursor(ECC_Visibility, true, Result);
 		if (bHit && StateMachineComponent)
 		{
-			StateMachineComponent->InteractWorld(Result);
+			StateMachineComponent->InteractWorld(Result, CreateContext());
 		}
 	}
+}
+
+FPlayerContext APlayerControl::CreateContext() const
+{
+	return FPlayerContext(ControlSimp);
 }
 
 #pragma endregion 

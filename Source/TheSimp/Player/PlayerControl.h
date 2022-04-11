@@ -5,12 +5,14 @@
 #include "CoreMinimal.h"
 #include "TheSimpPlayerController.h"
 #include "GameFramework/Pawn.h"
+#include "StateMachine/IPlayerState.h"
 #include "PlayerControl.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
 class UPawnMovementComponent;
 class UPlayerStateMachineComponent;
+class ASimp;
 
 UCLASS()
 class THESIMP_API APlayerControl : public APawn
@@ -45,6 +47,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	UPlayerStateMachineComponent* StateMachineComponent;
 
+	UPROPERTY(VisibleAnywhere)
+	ASimp* ControlSimp;
+
 	UPROPERTY(EditDefaultsOnly)
 	float MovementSpeed = 100.f;
 
@@ -56,5 +61,6 @@ private:
 	void RotateRight(float Value);
 	
 	void Interact();
+	FPlayerContext CreateContext() const;
 	ATheSimpPlayerController* GetPlayerController() const;
 };

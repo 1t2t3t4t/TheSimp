@@ -13,21 +13,21 @@ UPlayerStateMachineComponent::UPlayerStateMachineComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UPlayerStateMachineComponent::Click(const FHitResult Result) const
+void UPlayerStateMachineComponent::Click(const FHitResult Result, const FPlayerContext Context) const
 {
 	if (CurrentState)
 	{
-		CurrentState->Click(Result);
+		CurrentState->Click(Result, Context);
 	}
 }
 
-void UPlayerStateMachineComponent::InteractWorld(const FHitResult Result) const
+void UPlayerStateMachineComponent::InteractWorld(const FHitResult Result, const FPlayerContext Context) const
 {
 	DrawDebugSphere(GetWorld(), Result.ImpactPoint, 30.f, 6.f, FColor::Red, false, 10);
 	
 	if (CurrentState)
 	{
-		CurrentState->InteractWorld(Result);
+		CurrentState->InteractWorld(Result, Context);
 	}
 }
 
@@ -50,12 +50,6 @@ void UPlayerStateMachineComponent::UpdateState()
 		CurrentState = MakeUnique<FBuildState>();
 		break;
 	default: ;
-	}
-
-	const AActor* Owner = GetOwner();
-	if (CurrentState && Owner && Owner->InputComponent)
-	{
-		CurrentState->SetUpInput(Owner->InputComponent);
 	}
 }
 

@@ -17,14 +17,14 @@ public:
 	// Sets default values for this component's properties
 	UPlayerStateMachineComponent();
 
-	void Click(const FHitResult Result) const;
-	void InteractWorld(const FHitResult Result) const;
+	void Click(const FHitResult Result, const FPlayerContext Context) const;
+	void InteractWorld(const FHitResult Result, const FPlayerContext Context) const;
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	
-	virtual EPlayerMode GetCurrentPlayerMode() const;
+
+	EPlayerMode GetCurrentPlayerMode() const;
 
 public:
 	TUniquePtr<IPlayerState> CurrentState;

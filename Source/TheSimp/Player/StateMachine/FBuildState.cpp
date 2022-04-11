@@ -1,13 +1,10 @@
 ﻿#include "FBuildState.h"
 
-void FBuildState::SetUpInput(UInputComponent* Input)
+void FBuildState::Click(const FHitResult Result, const FPlayerContext Context)
 {
 }
 
-void FBuildState::Click(const FHitResult Result)
+void FBuildState::InteractWorld(const FHitResult Result, const FPlayerContext Context)
 {
-}
-
-void FBuildState::InteractWorld(const FHitResult Result)
-{
+	// No interaction in build mode.
 }
