@@ -1,2 +1,2 @@
-Content/Asset/**.uasset filter=lfs diff=lfs merge=lfs -text
+/Content/Asset/**/* filter=lfs diff=lfs merge=lfs -text
 Content/Asset/**/* filter=lfs diff=lfs merge=lfs -text
