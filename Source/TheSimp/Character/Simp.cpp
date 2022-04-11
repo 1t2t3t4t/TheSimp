@@ -15,7 +15,6 @@ ASimp::ASimp()
 void ASimp::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -30,3 +29,8 @@ void ASimp::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+AAIController* ASimp::GetAIController() const
+{
+	AController* Controller = GetController();
+	return Cast<AAIController>(Controller);
+}
