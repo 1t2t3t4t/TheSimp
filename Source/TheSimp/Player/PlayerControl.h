@@ -30,6 +30,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	ASimp* SpawnSimp();
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -50,6 +51,12 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	ASimp* ControlSimp;
 
+	UPROPERTY(VisibleAnywhere)
+	TArray<ASimp*> HouseHold;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ASimp> SimpClass;
+
 	UPROPERTY(EditDefaultsOnly)
 	float MovementSpeed = 100.f;
 
@@ -59,7 +66,9 @@ private:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 	void RotateRight(float Value);
-	
+	bool CastCursorToWorld(FHitResult& Result) const;
+	void Click();
+
 	void Interact();
 	FPlayerContext CreateContext() const;
 	ATheSimpPlayerController* GetPlayerController() const;

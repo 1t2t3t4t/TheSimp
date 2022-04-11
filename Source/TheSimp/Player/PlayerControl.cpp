@@ -10,6 +10,7 @@
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "StateMachine/PlayerStateMachineComponent.h"
+#include "TheSimp/Character/Simp.h"
 
 // Sets default values
 APlayerControl::APlayerControl()
@@ -35,12 +36,21 @@ void APlayerControl::BeginPlay()
 	Super::BeginPlay();
 	
 	bUseControllerRotationYaw = true;
+	ControlSimp = SpawnSimp();
 }
 
 // Called every frame
 void APlayerControl::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+ASimp* APlayerControl::SpawnSimp()
+{
+	ASimp* Simp = GetWorld()->SpawnActor<ASimp>(SimpClass);
+	HouseHold.Add(Simp);
+	Simp->SetOwner(this);
+	return Simp;
 }
 
 // Called to bind functionality to input
@@ -53,6 +63,7 @@ void APlayerControl::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis(TEXT("RotateRight"), this, &APlayerControl::RotateRight);
 
 	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &APlayerControl::Interact);
+	PlayerInputComponent->BindAction(TEXT("Click"), IE_Pressed, this, &APlayerControl::Click);
 }
 
 ATheSimpPlayerController* APlayerControl::GetPlayerController() const
@@ -86,16 +97,33 @@ void APlayerControl::RotateRight(const float Value)
 
 #pragma region Interaction
 
-void APlayerControl::Interact()
+bool APlayerControl::CastCursorToWorld(FHitResult& Result) const
 {
 	if (const ATheSimpPlayerController* PlayerController = GetPlayerController())
 	{
-		FHitResult Result;
-		const bool bHit = PlayerController->GetHitResultUnderCursor(ECC_Visibility, true, Result);
-		if (bHit && StateMachineComponent)
-		{
-			StateMachineComponent->InteractWorld(Result, CreateContext());
-		}
+		return PlayerController->GetHitResultUnderCursor(ECC_Visibility, true, Result);
+	}
+
+	return false;
+}
+
+void APlayerControl::Click()
+{
+	FHitResult Result;
+	const bool bHit = CastCursorToWorld(Result);
+	if (bHit && StateMachineComponent)
+	{
+		StateMachineComponent->Click(Result, CreateContext());
+	}
+}
+
+void APlayerControl::Interact()
+{
+	FHitResult Result;
+	const bool bHit = CastCursorToWorld(Result);
+	if (bHit && StateMachineComponent)
+	{
+		StateMachineComponent->InteractWorld(Result, CreateContext());
 	}
 }
 

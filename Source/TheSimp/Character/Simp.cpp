@@ -3,7 +3,6 @@
 
 #include "Simp.h"
 
-
 // Sets default values
 ASimp::ASimp()
 {
@@ -27,10 +26,4 @@ void ASimp::Tick(float DeltaTime)
 void ASimp::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
-AAIController* ASimp::GetAIController() const
-{
-	AController* Controller = GetController();
-	return Cast<AAIController>(Controller);
 }
