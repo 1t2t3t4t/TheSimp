@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayerPawn.h"
+#include "PlayerControl.h"
 
 #include "DrawDebugHelpers.h"
 #include "TheSimpPlayerController.h"
@@ -12,7 +12,7 @@
 #include "StateMachine/PlayerStateMachineComponent.h"
 
 // Sets default values
-APlayerPawn::APlayerPawn()
+APlayerControl::APlayerControl()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -30,7 +30,7 @@ APlayerPawn::APlayerPawn()
 }
 
 // Called when the game starts or when spawned
-void APlayerPawn::BeginPlay()
+void APlayerControl::BeginPlay()
 {
 	Super::BeginPlay();
 	
@@ -38,46 +38,46 @@ void APlayerPawn::BeginPlay()
 }
 
 // Called every frame
-void APlayerPawn::Tick(float DeltaTime)
+void APlayerControl::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
 // Called to bind functionality to input
-void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void APlayerControl::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &APlayerPawn::MoveForward);
-	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &APlayerPawn::MoveRight);
-	PlayerInputComponent->BindAxis(TEXT("RotateRight"), this, &APlayerPawn::RotateRight);
+	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &APlayerControl::MoveForward);
+	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &APlayerControl::MoveRight);
+	PlayerInputComponent->BindAxis(TEXT("RotateRight"), this, &APlayerControl::RotateRight);
 
-	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &APlayerPawn::Interact);
+	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &APlayerControl::Interact);
 }
 
-ATheSimpPlayerController* APlayerPawn::GetPlayerController() const
+ATheSimpPlayerController* APlayerControl::GetPlayerController() const
 {
 	return Cast<ATheSimpPlayerController>(GetController());
 }
 
 #pragma region Movement
 
-void APlayerPawn::MoveForward(const float Value)
+void APlayerControl::MoveForward(const float Value)
 {
 	const float Movement = Value * MovementSpeed * GetWorld()->GetDeltaSeconds();
 	const FVector Direction = GetActorForwardVector() * Movement;
 	AddMovementInput(Direction);
 }
 
-void APlayerPawn::MoveRight(const float Value)
+void APlayerControl::MoveRight(const float Value)
 {
 	const float Movement = Value * MovementSpeed * GetWorld()->GetDeltaSeconds();
 	const FVector Direction = GetActorRightVector() * Movement;
 	AddMovementInput(Direction);
 }
 
-void APlayerPawn::RotateRight(const float Value)
+void APlayerControl::RotateRight(const float Value)
 {
 	const float Rotate = -1.f * Value * RotateRate * GetWorld()->GetDeltaSeconds();
 	AddControllerYawInput(Rotate);
@@ -87,15 +87,15 @@ void APlayerPawn::RotateRight(const float Value)
 
 #pragma region Interaction
 
-void APlayerPawn::Interact()
+void APlayerControl::Interact()
 {
 	if (const ATheSimpPlayerController* PlayerController = GetPlayerController())
 	{
 		FHitResult Result;
 		const bool bHit = PlayerController->GetHitResultUnderCursor(ECC_Visibility, true, Result);
-		if (bHit)
+		if (bHit && StateMachineComponent)
 		{
-			DrawDebugSphere(GetWorld(), Result.ImpactPoint, 30.f, 6.f, FColor::Red, false, 10);
+			StateMachineComponent->InteractWorld(Result);
 		}
 	}
 }

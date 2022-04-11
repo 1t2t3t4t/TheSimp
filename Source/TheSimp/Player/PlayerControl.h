@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "TheSimpPlayerController.h"
 #include "GameFramework/Pawn.h"
-#include "PlayerPawn.generated.h"
+#include "PlayerControl.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -13,13 +13,13 @@ class UPawnMovementComponent;
 class UPlayerStateMachineComponent;
 
 UCLASS()
-class THESIMP_API APlayerPawn : public APawn
+class THESIMP_API APlayerControl : public APawn
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this pawn's properties
-	APlayerPawn();
+	APlayerControl();
 
 protected:
 	// Called when the game starts or when spawned

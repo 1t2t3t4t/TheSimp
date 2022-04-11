@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "IPlayerState.h"
 
-class FPlayState : public IPlayerState
+class FBuildState : public IPlayerState
 {
 public:
 	virtual void SetUpInput(UInputComponent* Input) override;

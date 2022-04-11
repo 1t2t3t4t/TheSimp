@@ -9,7 +9,7 @@
 #include "PlayerStateMachineComponent.generated.h"
 
 UCLASS(ClassGroup=(StateMachine), meta=(BlueprintSpawnableComponent))
-class THESIMP_API UPlayerStateMachineComponent : public UActorComponent
+class THESIMP_API UPlayerStateMachineComponent final : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -17,14 +17,13 @@ public:
 	// Sets default values for this component's properties
 	UPlayerStateMachineComponent();
 
-	void Click(const FHitResult Result);
-	void InteractWorld(const FHitResult Result);
+	void Click(const FHitResult Result) const;
+	void InteractWorld(const FHitResult Result) const;
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	void UpdateState();
-
+	
 	virtual EPlayerMode GetCurrentPlayerMode() const;
 
 public:
@@ -35,5 +34,6 @@ public:
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
+	void UpdateState();
 	ATheSimpGameModeBase* GetGameMode() const;
 };
