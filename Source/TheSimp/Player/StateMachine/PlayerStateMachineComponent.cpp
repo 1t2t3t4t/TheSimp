@@ -13,6 +13,31 @@ UPlayerStateMachineComponent::UPlayerStateMachineComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
+void UPlayerStateMachineComponent::SetupInput(UInputComponent* InputComponent)
+{
+	InputComponent->BindAction(TEXT("ToggleBuild"), IE_Pressed, this, &UPlayerStateMachineComponent::ToggleBuildMode);
+}
+
+void UPlayerStateMachineComponent::ToggleBuildMode()
+{
+	const EPlayerMode CurrentMode = GetCurrentPlayerMode();
+	const EPlayerMode NewMode = [&]()
+	{
+		switch (CurrentMode)
+		{
+		case EPlayerMode::Unknown:
+			return EPlayerMode::Build;
+		case EPlayerMode::Play:
+			return EPlayerMode::Build;
+		case EPlayerMode::Build:
+			return EPlayerMode::Play;
+		}
+		return EPlayerMode::Unknown;
+	}();
+	GetGameMode()->CurrentMode = NewMode;
+	UpdateState();
+}
+
 void UPlayerStateMachineComponent::Click(const FHitResult Result, const FPlayerContext Context) const
 {
 	if (CurrentState)
@@ -50,6 +75,12 @@ void UPlayerStateMachineComponent::UpdateState()
 		CurrentState = MakeUnique<FBuildState>();
 		break;
 	default: ;
+	}
+
+	if (GEngine)
+	{
+		const FString Text = FString::Printf(TEXT("Current mode update: %d"), GetCurrentPlayerMode());
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, Text);
 	}
 }
 

@@ -64,6 +64,8 @@ void APlayerControl::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &APlayerControl::Interact);
 	PlayerInputComponent->BindAction(TEXT("Click"), IE_Pressed, this, &APlayerControl::Click);
+
+	StateMachineComponent->SetupInput(InputComponent);
 }
 
 ATheSimpPlayerController* APlayerControl::GetPlayerController() const

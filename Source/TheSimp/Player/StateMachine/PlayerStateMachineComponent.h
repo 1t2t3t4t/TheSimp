@@ -17,6 +17,9 @@ public:
 	// Sets default values for this component's properties
 	UPlayerStateMachineComponent();
 
+	void SetupInput(UInputComponent* InputComponent);
+	void ToggleBuildMode();
+
 	void Click(const FHitResult Result, const FPlayerContext Context) const;
 	void InteractWorld(const FHitResult Result, const FPlayerContext Context) const;
 
