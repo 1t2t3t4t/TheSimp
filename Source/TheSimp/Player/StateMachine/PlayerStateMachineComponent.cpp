@@ -7,6 +7,7 @@
 #include "FBuildState.h"
 #include "FPlayState.h"
 #include "Kismet/GameplayStatics.h"
+#include "TheSimp/EnumHelper.h"
 
 UPlayerStateMachineComponent::UPlayerStateMachineComponent()
 {
@@ -79,7 +80,7 @@ void UPlayerStateMachineComponent::UpdateState()
 
 	if (GEngine)
 	{
-		const FString Text = FString::Printf(TEXT("Current mode update: %d"), GetCurrentPlayerMode());
+		const FString Text = FString::Printf(TEXT("Current mode update: %s"), *EnumHelper::ToString(GetCurrentPlayerMode()));
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, Text);
 	}
 }

@@ -62,6 +62,15 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	float RotateRate = 10.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float ZoomSpeed = 10.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float ZoomMin = 300.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float ZoomMax = 1200.f;
 	
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -71,5 +80,6 @@ private:
 
 	void Interact();
 	FPlayerContext CreateContext() const;
+	void Zoom(float Value);
 	ATheSimpPlayerController* GetPlayerController() const;
 };

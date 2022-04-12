@@ -61,6 +61,7 @@ void APlayerControl::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &APlayerControl::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &APlayerControl::MoveRight);
 	PlayerInputComponent->BindAxis(TEXT("RotateRight"), this, &APlayerControl::RotateRight);
+	PlayerInputComponent->BindAxis(TEXT("Zoom"), this, &APlayerControl::Zoom);
 
 	PlayerInputComponent->BindAction(TEXT("Interact"), IE_Pressed, this, &APlayerControl::Interact);
 	PlayerInputComponent->BindAction(TEXT("Click"), IE_Pressed, this, &APlayerControl::Click);
@@ -132,6 +133,17 @@ void APlayerControl::Interact()
 FPlayerContext APlayerControl::CreateContext() const
 {
 	return FPlayerContext(ControlSimp);
+}
+
+#pragma endregion 
+
+#pragma region Control
+
+void APlayerControl::Zoom(const float Value)
+{
+	const float ZoomVal = ZoomSpeed * Value * GetWorld()->DeltaTimeSeconds;
+	const float ClampedZoom = FMath::Clamp(SpringArmComponent->TargetArmLength + ZoomVal, ZoomMin, ZoomMax);
+	SpringArmComponent->TargetArmLength = ClampedZoom;
 }
 
 #pragma endregion 
