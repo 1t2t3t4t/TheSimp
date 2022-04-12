@@ -8,6 +8,7 @@
 #include "FPlayState.h"
 #include "Kismet/GameplayStatics.h"
 #include "TheSimp/EnumHelper.h"
+#include "TheSimp/Player/TheSimpPlayerController.h"
 
 UPlayerStateMachineComponent::UPlayerStateMachineComponent()
 {
@@ -67,13 +68,16 @@ void UPlayerStateMachineComponent::BeginPlay()
 void UPlayerStateMachineComponent::UpdateState()
 {
 	const EPlayerMode Mode = GetCurrentPlayerMode();
+	ATheSimpPlayerController* PlayerController = GetPlayerController();
 	switch (Mode)
 	{
 	case EPlayerMode::Play:
 		CurrentState = MakeUnique<FPlayState>();
+		PlayerController->HideBuildWidget();
 		break;
 	case EPlayerMode::Build:
 		CurrentState = MakeUnique<FBuildState>();
+		PlayerController->ShowBuildWidget();
 		break;
 	default: ;
 	}
@@ -108,3 +112,11 @@ ATheSimpGameModeBase* UPlayerStateMachineComponent::GetGameMode() const
 	return Cast<ATheSimpGameModeBase>(UGameplayStatics::GetGameMode(this));
 }
 
+ATheSimpPlayerController* UPlayerStateMachineComponent::GetPlayerController() const
+{
+	if (const APawn* PawnOwner = Cast<APawn>(GetOwner()))
+	{
+		return Cast<ATheSimpPlayerController>(PawnOwner->GetController());
+	}
+	return nullptr;
+}

@@ -6,6 +6,7 @@
 #include "IPlayerState.h"
 #include "Components/ActorComponent.h"
 #include "TheSimp/TheSimpGameModeBase.h"
+#include "TheSimp/Player/TheSimpPlayerController.h"
 #include "PlayerStateMachineComponent.generated.h"
 
 UCLASS(ClassGroup=(StateMachine), meta=(BlueprintSpawnableComponent))
@@ -39,4 +40,5 @@ public:
 private:
 	void UpdateState();
 	ATheSimpGameModeBase* GetGameMode() const;
+	ATheSimpPlayerController* GetPlayerController() const;
 };

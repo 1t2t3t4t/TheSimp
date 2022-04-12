@@ -23,18 +23,6 @@ public:
 	// Sets default values for this pawn's properties
 	APlayerControl();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-	ASimp* SpawnSimp();
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 private:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComponent;
@@ -71,7 +59,20 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	float ZoomMax = 1200.f;
-	
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+	ASimp* SpawnSimp();
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+private:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 	void RotateRight(float Value);
