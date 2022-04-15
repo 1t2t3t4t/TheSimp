@@ -33,7 +33,7 @@ class IPlayerStateHandler
 	GENERATED_BODY()
 	
 public:
-	virtual void Tick(const float DeltaTime, const FPlayerContext, const IStateCommand* Command) = 0;
+	virtual void Begin() = 0;
 	
 	virtual void Click(const FHitResult Result, const FPlayerContext, const IStateCommand* Command) = 0;
 	virtual void InteractWorld(const FHitResult Result, const FPlayerContext Context, const IStateCommand* Command) = 0;

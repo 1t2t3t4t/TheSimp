@@ -3,6 +3,10 @@
 #include "AIController.h"
 #include "TheSimp/Character/Simp.h"
 
+void UPlayState::Begin()
+{
+}
+
 void UPlayState::Click(const FHitResult Result, const FPlayerContext Context, const IStateCommand* Command)
 {
 	if (Context.ControlSimp)
@@ -17,8 +21,4 @@ void UPlayState::Click(const FHitResult Result, const FPlayerContext Context, co
 void UPlayState::InteractWorld(const FHitResult Result, const FPlayerContext Context, const IStateCommand* Command)
 {
 	
-}
-
-void UPlayState::Tick(const float DeltaTime, const FPlayerContext, const IStateCommand* Command)
-{
 }

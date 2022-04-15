@@ -87,6 +87,7 @@ void UPlayerStateMachineComponent::UpdateState()
 		const FString Text = FString::Printf(TEXT("Current mode update: %s"), *EnumHelper::ToString(GetCurrentPlayerMode()));
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, Text);
 	}
+	CurrentState->Begin();
 }
 
 EPlayerMode UPlayerStateMachineComponent::GetCurrentPlayerMode() const

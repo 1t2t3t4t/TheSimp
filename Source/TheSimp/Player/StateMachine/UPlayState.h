@@ -10,5 +10,5 @@ class UPlayState final : public UObject, public IPlayerStateHandler
 public:
 	virtual void Click(const FHitResult Result, const FPlayerContext Context, const IStateCommand* Command) override;
 	virtual void InteractWorld(const FHitResult Result, const FPlayerContext Context, const IStateCommand* Command) override;
-	virtual void Tick(const float DeltaTime, const FPlayerContext, const IStateCommand* Command) override;
+	virtual void Begin() override;
 };

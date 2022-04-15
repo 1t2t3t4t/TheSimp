@@ -14,9 +14,10 @@ ASimpObject::ASimpObject()
 
 void ASimpObject::Init(const UBaseBuildingAsset* Asset) const
 {
-	if (Asset->Mesh.IsValid())
+	UStaticMesh* LoadedMesh = Asset->Mesh.LoadSynchronous();
+	if (LoadedMesh)
 	{
-		StaticMeshComponent->SetStaticMesh(Asset->Mesh.Get());
+		StaticMeshComponent->SetStaticMesh(LoadedMesh);
 	}
 }
 
