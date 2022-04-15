@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "IPlayerState.h"
+#include "IPlayerStateHandler.h"
 #include "Components/ActorComponent.h"
 #include "TheSimp/TheSimpGameModeBase.h"
 #include "TheSimp/Player/TheSimpPlayerController.h"
 #include "PlayerStateMachineComponent.generated.h"
 
 UCLASS(ClassGroup=(StateMachine), meta=(BlueprintSpawnableComponent))
-class THESIMP_API UPlayerStateMachineComponent final : public UActorComponent
+class THESIMP_API UPlayerStateMachineComponent final : public UActorComponent, public IStateCommand
 {
 	GENERATED_BODY()
 
@@ -31,7 +31,8 @@ protected:
 	EPlayerMode GetCurrentPlayerMode() const;
 
 public:
-	TUniquePtr<IPlayerState> CurrentState;
+	UPROPERTY(VisibleAnywhere)
+	TScriptInterface<IPlayerStateHandler> CurrentState;
 	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
@@ -41,4 +42,9 @@ private:
 	void UpdateState();
 	ATheSimpGameModeBase* GetGameMode() const;
 	ATheSimpPlayerController* GetPlayerController() const;
+
+	// Command
+public:
+	virtual AActor* SpawnActor(UClass* Class, FTransform const& Transform,
+		const FActorSpawnParameters& SpawnParameters) const override;
 };

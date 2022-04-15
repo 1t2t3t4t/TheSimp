@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "TheSimpPlayerController.h"
 #include "GameFramework/Pawn.h"
-#include "StateMachine/IPlayerState.h"
+#include "StateMachine/IPlayerStateHandler.h"
 #include "PlayerControl.generated.h"
 
 class USpringArmComponent;

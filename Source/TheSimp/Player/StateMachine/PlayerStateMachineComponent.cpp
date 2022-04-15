@@ -4,8 +4,8 @@
 #include "PlayerStateMachineComponent.h"
 
 #include "DrawDebugHelpers.h"
-#include "FBuildState.h"
-#include "FPlayState.h"
+#include "BuildState.h"
+#include "UPlayState.h"
 #include "Kismet/GameplayStatics.h"
 #include "TheSimp/EnumHelper.h"
 #include "TheSimp/Player/TheSimpPlayerController.h"
@@ -44,7 +44,7 @@ void UPlayerStateMachineComponent::Click(const FHitResult Result, const FPlayerC
 {
 	if (CurrentState)
 	{
-		CurrentState->Click(Result, Context);
+		CurrentState->Click(Result, Context, this);
 	}
 }
 
@@ -54,7 +54,7 @@ void UPlayerStateMachineComponent::InteractWorld(const FHitResult Result, const 
 	
 	if (CurrentState)
 	{
-		CurrentState->InteractWorld(Result, Context);
+		CurrentState->InteractWorld(Result, Context, this);
 	}
 }
 
@@ -72,11 +72,11 @@ void UPlayerStateMachineComponent::UpdateState()
 	switch (Mode)
 	{
 	case EPlayerMode::Play:
-		CurrentState = MakeUnique<FPlayState>();
+		CurrentState = NewObject<UPlayState>();
 		PlayerController->HideBuildWidget();
 		break;
 	case EPlayerMode::Build:
-		CurrentState = MakeUnique<FBuildState>();
+		CurrentState = NewObject<UBuildState>();
 		PlayerController->ShowBuildWidget();
 		break;
 	default: ;
@@ -119,4 +119,12 @@ ATheSimpPlayerController* UPlayerStateMachineComponent::GetPlayerController() co
 		return Cast<ATheSimpPlayerController>(PawnOwner->GetController());
 	}
 	return nullptr;
+}
+
+AActor* UPlayerStateMachineComponent::SpawnActor(
+	UClass* Class,
+	FTransform const& Transform,
+	const FActorSpawnParameters& SpawnParameters) const
+{
+	return GetWorld()->SpawnActor(Class, &Transform, SpawnParameters);
 }
