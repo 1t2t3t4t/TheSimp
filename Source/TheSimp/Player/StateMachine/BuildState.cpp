@@ -1,5 +1,6 @@
 ﻿#include "BuildState.h"
 
+#include "SnappingHelper.h"
 #include "Engine/AssetManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "TheSimp/MaterialAsset.h"
@@ -99,14 +100,34 @@ UMaterialAsset* UBuildState::GetBuildMaterial(const bool bIsValid) const
 
 void UBuildState::UpdateTransform()
 {
+	if (!CurrentObject)
+	{
+		return;
+	}
+	
 	if (const APlayerControl* PlayerControl = Cast<APlayerControl>(Owner))
 	{
 		if (const ATheSimpPlayerController* Controller = Cast<ATheSimpPlayerController>(PlayerControl->GetController()))
 		{
 			FHitResult Result;
 			Controller->GetHitResultUnderCursor(ECC_Visibility, false, Result);
+
+			TArray<FHitResult> HitResults;
+			UKismetSystemLibrary::SphereTraceMultiForObjects(Owner, Result.ImpactPoint, Result.ImpactPoint, 100.f, {UEngineTypes::ConvertToObjectType(ECC_WorldDynamic)}, false, {CurrentObject}, EDrawDebugTrace::ForOneFrame, HitResults, true);
+
+			FVector SlotLocation;
+			const ESnapSlot Slot = FSnappingHelper::CheckSnap(HitResults, Result.ImpactPoint, CurrentObject->GetMesh()->Bounds.GetBox().GetSize(), SlotLocation);
+			
 			FTransform Transform;
-			Transform.SetLocation(Result.ImpactPoint + Result.ImpactNormal);
+			if (Slot != ESnapSlot::None)
+			{
+				Transform.SetLocation(SlotLocation);
+			}
+			else
+			{
+				Transform.SetLocation(Result.ImpactPoint + Result.ImpactNormal);
+			}
+			
 			CurrentTransform = Transform;
 		}
 	}
