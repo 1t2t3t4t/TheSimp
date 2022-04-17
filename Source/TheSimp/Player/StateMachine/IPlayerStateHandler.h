@@ -38,4 +38,6 @@ public:
 	virtual void Tick(const float DeltaTime, const IStateCommand* Command) {};
 	virtual void Click(const FHitResult Result, const FPlayerContext, const IStateCommand* Command) = 0;
 	virtual void InteractWorld(const FHitResult Result, const FPlayerContext Context, const IStateCommand* Command) = 0;
+
+	virtual void End() {};
 };

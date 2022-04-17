@@ -20,6 +20,21 @@ void UBuildState::Begin()
 	AssetManager.LoadPrimaryAssets(Ids, {}, Delegate);
 }
 
+void UBuildState::End()
+{
+	IPlayerStateHandler::End();
+	CurrentObject->Destroy();
+	CurrentObject = nullptr;
+	Owner = nullptr;
+
+	UAssetManager& AssetManager = UAssetManager::Get();
+	TArray<FPrimaryAssetId> Ids;
+	AssetManager.GetPrimaryAssetIdList(UConstructionAsset::AssetType, Ids);
+	AssetManager.GetPrimaryAssetIdList(UMaterialAsset::AssetType, Ids);
+
+	AssetManager.UnloadPrimaryAssets(Ids);
+}
+
 void UBuildState::OnAssetLoaded()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Asset Loaded"));
@@ -32,23 +47,15 @@ ASimpObject* UBuildState::SpawnObjectIfNeeded(const IStateCommand* Command, int3
 	{
 		return nullptr;
 	}
-	UAssetManager& AssetManager = UAssetManager::Get();
+	const UAssetManager& AssetManager = UAssetManager::Get();
 	TArray<UObject*> Objs;
 	const bool bFound = AssetManager.GetPrimaryAssetObjectList(UConstructionAsset::AssetType, Objs);
 	if (Objs.Num() >= 1 && bFound)
 	{
 		if (const UConstructionAsset* Asset = Cast<UConstructionAsset>(Objs[0]))
-		{;
+		{
 			ASimpObject* Object = Cast<ASimpObject>(Command->SpawnActor(ASimpObject::StaticClass(), Location));
 			Object->Init(Asset);
-			
-			TArray<UObject*> Mats;
-			AssetManager.GetPrimaryAssetObjectList(UMaterialAsset::AssetType, Mats);
-			
-			if (const UMaterialAsset* Mat = Cast<UMaterialAsset>(Mats[0]))
-			{
-				Object->SetMaterial(Mat);
-			}
 			return Object;
 		}
 	}
@@ -58,7 +65,7 @@ ASimpObject* UBuildState::SpawnObjectIfNeeded(const IStateCommand* Command, int3
 
 UMaterialAsset* UBuildState::GetBuildMaterial(const bool bIsValid) const
 {
-	UAssetManager& AssetManager = UAssetManager::Get();
+	const UAssetManager& AssetManager = UAssetManager::Get();
 	TArray<UObject*> Mats;
 	const bool bLoaded = AssetManager.GetPrimaryAssetObjectList(UMaterialAsset::AssetType, Mats);
 	if (!bLoaded)
@@ -90,33 +97,68 @@ UMaterialAsset* UBuildState::GetBuildMaterial(const bool bIsValid) const
 	return nullptr;
 }
 
-void UBuildState::Tick(const float DeltaTime, const IStateCommand* Command)
+void UBuildState::UpdateTransform()
 {
-	IPlayerStateHandler::Tick(DeltaTime, Command);
 	if (const APlayerControl* PlayerControl = Cast<APlayerControl>(Owner))
 	{
-		if (ATheSimpPlayerController* Controller = Cast<ATheSimpPlayerController>(PlayerControl->GetController()))
+		if (const ATheSimpPlayerController* Controller = Cast<ATheSimpPlayerController>(PlayerControl->GetController()))
 		{
 			FHitResult Result;
 			Controller->GetHitResultUnderCursor(ECC_Visibility, false, Result);
 			FTransform Transform;
 			Transform.SetLocation(Result.ImpactPoint + Result.ImpactNormal);
-			if (!CurrentObject)
-			{
-				CurrentObject = SpawnObjectIfNeeded(Command, 0, Transform);
-			}
-			CurrentObject->SetActorTransform(Transform);
-			if (const UMaterialAsset* Mat = GetBuildMaterial(true))
-			{
-				CurrentObject->SetMaterial(Mat);
-			}
+			CurrentTransform = Transform;
 		}
 	}
 }
 
+void UBuildState::Tick(const float DeltaTime, const IStateCommand* Command)
+{
+	IPlayerStateHandler::Tick(DeltaTime, Command);
+	UpdateTransform();
+
+	if (!bIsAssetLoaded)
+	{
+		return;
+	}
+	if (!CurrentObject)
+	{
+		CurrentObject = SpawnObjectIfNeeded(Command, 0, CurrentTransform);
+		CurrentObject->GetMesh()->SetGenerateOverlapEvents(true);
+		CurrentObject->GetMesh()->SetCollisionProfileName("OverlapAll");
+		if (const UMaterialAsset* Mat = GetBuildMaterial(true))
+		{
+			CurrentObject->SetMaterial(Mat);
+		}
+	}
+
+	const bool bTestInvalid = CurrentObject->GetMesh()->GetOverlapInfos().Num() > 0;
+	if (bTestInvalid != bIsInvalid)
+	{
+		bIsInvalid = bTestInvalid;
+		if (const UMaterialAsset* Mat = GetBuildMaterial(!bIsInvalid))
+		{
+			CurrentObject->SetMaterial(Mat);
+		}
+	}
+	
+	CurrentObject->SetActorTransform(CurrentTransform);
+}
+
 void UBuildState::Click(const FHitResult Result, const FPlayerContext Context, const IStateCommand* Command)
 {
+	if (bIsInvalid)
+	{
+		return;
+	}
 	
+	if (CurrentObject)
+	{
+		CurrentObject->Destroy();
+		CurrentObject= nullptr;
+	}
+
+	SpawnObjectIfNeeded(Command, 0, CurrentTransform);
 }
 
 void UBuildState::InteractWorld(const FHitResult Result, const FPlayerContext Context, const IStateCommand* Command)

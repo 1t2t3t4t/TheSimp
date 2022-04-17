@@ -11,15 +11,19 @@ UCLASS()
 class UBuildState final : public UObject, public IPlayerStateHandler
 {
 	GENERATED_BODY()
+	
 public:
 	void OnAssetLoaded();
 	ASimpObject* SpawnObjectIfNeeded(const IStateCommand* Command, int32 Idx, const FTransform Location) const;
 	UMaterialAsset* GetBuildMaterial(bool bIsValid) const;
+	void UpdateTransform();
 
 	virtual void Tick(const float DeltaTime, const IStateCommand* Command) override;
 	virtual void Click(const FHitResult Result, const FPlayerContext Context, const IStateCommand* Command) override;
 	virtual void InteractWorld(const FHitResult Result, const FPlayerContext Context, const IStateCommand* Command) override;
 	virtual void Begin() override;
+
+	virtual void End() override;
 
 	void SetOwner(AActor* NewOwner)
 	{
@@ -35,5 +39,6 @@ private:
 	UPROPERTY()
 	AActor* Owner;
 
+	bool bIsInvalid = false;
 	bool bIsAssetLoaded = false;
 };

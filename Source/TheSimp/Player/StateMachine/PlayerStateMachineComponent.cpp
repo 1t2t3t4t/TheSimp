@@ -67,6 +67,11 @@ void UPlayerStateMachineComponent::BeginPlay()
 
 void UPlayerStateMachineComponent::UpdateState()
 {
+	if (CurrentState)
+	{
+		CurrentState->End();
+		CurrentState.GetObject()->ConditionalBeginDestroy();
+	}
 	const EPlayerMode Mode = GetCurrentPlayerMode();
 	ATheSimpPlayerController* PlayerController = GetPlayerController();
 	switch (Mode)
@@ -85,7 +90,7 @@ void UPlayerStateMachineComponent::UpdateState()
 		}
 	default: ;
 	}
-
+	
 	if (GEngine)
 	{
 		const FString Text = FString::Printf(TEXT("Current mode update: %s"), *EnumHelper::ToString(GetCurrentPlayerMode()));
@@ -109,7 +114,10 @@ void UPlayerStateMachineComponent::TickComponent(float DeltaTime, ELevelTick Tic
                                         FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	CurrentState->Tick(DeltaTime, this);
+	if (CurrentState)
+	{
+		CurrentState->Tick(DeltaTime, this);
+	}
 }
 
 ATheSimpGameModeBase* UPlayerStateMachineComponent::GetGameMode() const
