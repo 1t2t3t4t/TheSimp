@@ -109,7 +109,7 @@ void UPlayerStateMachineComponent::TickComponent(float DeltaTime, ELevelTick Tic
                                         FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
+	CurrentState->Tick(DeltaTime, this);
 }
 
 ATheSimpGameModeBase* UPlayerStateMachineComponent::GetGameMode() const

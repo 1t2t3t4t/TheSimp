@@ -19,6 +19,8 @@ public:
 
 	void Init(const UBaseBuildingAsset* Asset) const;
 	void SetMaterial(const UMaterialAsset* Material) const;
+
+	UStaticMeshComponent* GetMesh() const { return StaticMeshComponent; }
 	
 private:
 	UPROPERTY(VisibleAnywhere)
