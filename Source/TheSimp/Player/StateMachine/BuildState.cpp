@@ -190,5 +190,8 @@ void UBuildState::Click(const FHitResult Result, const FPlayerContext Context, c
 
 void UBuildState::InteractWorld(const FHitResult Result, const FPlayerContext Context, const IStateCommand* Command)
 {
-	// No interaction in build mode.
+	if (ASimpObject* Object = Cast<ASimpObject>(Result.GetActor()))
+	{
+		Object->Destroy();
+	}
 }
