@@ -25,7 +25,8 @@ FHitResult FindMinDist(const TArray<FHitResult>& Results, const FVector Location
 	return Result;
 }
 
-ESnapSlot FSnappingHelper::CheckSnap(const TArray<FHitResult> OverlapInfos, const FVector Location, const FVector MeshSize, FVector& Out)
+ESnapSlot FSnappingHelper::CheckSnap(const TArray<FHitResult> OverlapInfos, const FVector Location,
+                                     const FVector MeshSize, FVector& Out)
 {
 	const TArray<FHitResult> Results = OverlapInfos.FilterByPredicate([](const FHitResult& Info) -> bool
 	{
@@ -38,13 +39,12 @@ ESnapSlot FSnappingHelper::CheckSnap(const TArray<FHitResult> OverlapInfos, cons
 
 	const FHitResult Result = FindMinDist(Results, Location);
 	const ASimpObject* Object = Cast<ASimpObject>(Result.GetActor());
-	const FVector LocalToObjectLocation = UKismetMathLibrary::InverseTransformLocation(Object->GetActorTransform(), Location);
+	const FVector LocalToObjectLocation = UKismetMathLibrary::InverseTransformLocation(
+		Object->GetActorTransform(), Location);
 	const FVector ObjectSize = Object->GetMesh()->Bounds.GetBox().GetSize();
 
-	Out.X = Object->GetActorLocation().X;
-	Out.Y = Object->GetActorLocation().Y;
-	Out.Z = Object->GetActorLocation().Z;
-	
+	Out = Object->GetActorLocation();
+
 	if (LocalToObjectLocation.X <= 0)
 	{
 		Out.X -= ObjectSize.X + SnapOffset;
@@ -65,6 +65,6 @@ ESnapSlot FSnappingHelper::CheckSnap(const TArray<FHitResult> OverlapInfos, cons
 		Out.Y -= ObjectSize.Y + SnapOffset;
 		return ESnapSlot::Left;
 	}
-	
+
 	return ESnapSlot::None;
 }

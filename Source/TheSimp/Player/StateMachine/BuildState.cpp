@@ -16,7 +16,7 @@ void UBuildState::Begin()
 	AssetManager.GetPrimaryAssetIdList(UMaterialAsset::AssetType, Ids);
 
 	UE_LOG(LogTemp, Warning, TEXT("Assets %d"), Ids.Num());
-	
+
 	const FStreamableDelegate Delegate = FStreamableDelegate::CreateUObject(this, &UBuildState::OnAssetLoaded);
 	AssetManager.LoadPrimaryAssets(Ids, {}, Delegate);
 }
@@ -89,7 +89,7 @@ UMaterialAsset* UBuildState::GetBuildMaterial(const bool bIsValid) const
 	{
 		return nullptr;
 	}
-	
+
 	if (UMaterialAsset* MaterialAsset = Cast<UMaterialAsset>(*Mat))
 	{
 		return MaterialAsset;
@@ -104,7 +104,7 @@ void UBuildState::UpdateTransform()
 	{
 		return;
 	}
-	
+
 	if (const APlayerControl* PlayerControl = Cast<APlayerControl>(Owner))
 	{
 		if (const ATheSimpPlayerController* Controller = Cast<ATheSimpPlayerController>(PlayerControl->GetController()))
@@ -113,11 +113,16 @@ void UBuildState::UpdateTransform()
 			Controller->GetHitResultUnderCursor(ECC_Visibility, false, Result);
 
 			TArray<FHitResult> HitResults;
-			UKismetSystemLibrary::SphereTraceMultiForObjects(Owner, Result.ImpactPoint, Result.ImpactPoint, 100.f, {UEngineTypes::ConvertToObjectType(ECC_WorldDynamic)}, false, {CurrentObject}, EDrawDebugTrace::ForOneFrame, HitResults, true);
+			UKismetSystemLibrary::SphereTraceMultiForObjects(Owner, Result.ImpactPoint, Result.ImpactPoint, 100.f,
+			                                                 {UEngineTypes::ConvertToObjectType(ECC_WorldDynamic)},
+			                                                 false, {CurrentObject}, EDrawDebugTrace::ForOneFrame,
+			                                                 HitResults, true);
 
 			FVector SlotLocation;
-			const ESnapSlot Slot = FSnappingHelper::CheckSnap(HitResults, Result.ImpactPoint, CurrentObject->GetMesh()->Bounds.GetBox().GetSize(), SlotLocation);
-			
+			const ESnapSlot Slot = FSnappingHelper::CheckSnap(HitResults, Result.ImpactPoint,
+			                                                  CurrentObject->GetMesh()->Bounds.GetBox().GetSize(),
+			                                                  SlotLocation);
+
 			FTransform Transform;
 			const UConstructionAsset* ConstructionAsset = CurrentObject->GetAsset<UConstructionAsset>();
 			if (Slot != ESnapSlot::None && ConstructionAsset && ConstructionAsset->SnappableSlots.Contains(Slot))
@@ -128,7 +133,7 @@ void UBuildState::UpdateTransform()
 			{
 				Transform.SetLocation(Result.ImpactPoint + Result.ImpactNormal);
 			}
-			
+
 			CurrentTransform = Transform;
 		}
 	}
@@ -163,7 +168,7 @@ void UBuildState::Tick(const float DeltaTime, const IStateCommand* Command)
 			CurrentObject->SetMaterial(Mat);
 		}
 	}
-	
+
 	CurrentObject->SetActorTransform(CurrentTransform);
 }
 
@@ -173,11 +178,11 @@ void UBuildState::Click(const FHitResult Result, const FPlayerContext Context, c
 	{
 		return;
 	}
-	
+
 	if (CurrentObject)
 	{
 		CurrentObject->Destroy();
-		CurrentObject= nullptr;
+		CurrentObject = nullptr;
 	}
 
 	SpawnObjectIfNeeded(Command, 0, CurrentTransform);
@@ -187,4 +192,3 @@ void UBuildState::InteractWorld(const FHitResult Result, const FPlayerContext Co
 {
 	// No interaction in build mode.
 }
-
