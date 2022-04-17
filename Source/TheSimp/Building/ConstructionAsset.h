@@ -15,8 +15,10 @@ class THESIMP_API UConstructionAsset : public UBaseBuildingAsset
 	GENERATED_BODY()
 
 public:
+	static const FPrimaryAssetType AssetType;
+	
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override
 	{
-		return FPrimaryAssetId("Construction", GetFName());
+		return FPrimaryAssetId(AssetType, GetFName());
 	}
 };

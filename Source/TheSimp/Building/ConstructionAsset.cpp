@@ -2,3 +2,5 @@
 
 
 #include "ConstructionAsset.h"
+
+const FPrimaryAssetType UConstructionAsset::AssetType = TEXT("Construction");

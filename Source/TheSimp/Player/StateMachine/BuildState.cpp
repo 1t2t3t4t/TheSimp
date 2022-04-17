@@ -10,7 +10,7 @@ void UBuildState::Begin()
 {
 	UAssetManager& AssetManager = UAssetManager::Get();
 	TArray<FPrimaryAssetId> Ids;
-	AssetManager.GetPrimaryAssetIdList(TEXT("Construction"), Ids);
+	AssetManager.GetPrimaryAssetIdList(UConstructionAsset::AssetType, Ids);
 	AssetManager.GetPrimaryAssetIdList(UMaterialAsset::AssetType, Ids);
 
 	UE_LOG(LogTemp, Warning, TEXT("Assets %d"), Ids.Num());
@@ -29,7 +29,7 @@ void UBuildState::Click(const FHitResult Result, const FPlayerContext Context, c
 {
 	UAssetManager& AssetManager = UAssetManager::Get();
 	TArray<UObject*> Objs;
-	bool bFound = AssetManager.GetPrimaryAssetObjectList(TEXT("Construction"), Objs);
+	bool bFound = AssetManager.GetPrimaryAssetObjectList(UConstructionAsset::AssetType, Objs);
 	if (Objs.Num() >= 1 && bFound)
 	{
 		if (const UConstructionAsset* Asset = Cast<UConstructionAsset>(Objs[0]))
