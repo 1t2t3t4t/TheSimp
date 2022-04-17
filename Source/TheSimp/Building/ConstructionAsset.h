@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseBuildingAsset.h"
+#include "TheSimp/Player/StateMachine/SnappingHelper.h"
 #include "ConstructionAsset.generated.h"
 
 /**
@@ -16,6 +17,9 @@ class THESIMP_API UConstructionAsset : public UBaseBuildingAsset
 
 public:
 	static const FPrimaryAssetType AssetType;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<ESnapSlot> SnappableSlots = { ESnapSlot::None };
 	
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override
 	{

@@ -53,7 +53,7 @@ ASimpObject* UBuildState::SpawnObjectIfNeeded(const IStateCommand* Command, int3
 	const bool bFound = AssetManager.GetPrimaryAssetObjectList(UConstructionAsset::AssetType, Objs);
 	if (Objs.Num() >= 1 && bFound)
 	{
-		if (const UConstructionAsset* Asset = Cast<UConstructionAsset>(Objs[0]))
+		if (UConstructionAsset* Asset = Cast<UConstructionAsset>(Objs[0]))
 		{
 			ASimpObject* Object = Cast<ASimpObject>(Command->SpawnActor(ASimpObject::StaticClass(), Location));
 			Object->Init(Asset);
@@ -119,7 +119,8 @@ void UBuildState::UpdateTransform()
 			const ESnapSlot Slot = FSnappingHelper::CheckSnap(HitResults, Result.ImpactPoint, CurrentObject->GetMesh()->Bounds.GetBox().GetSize(), SlotLocation);
 			
 			FTransform Transform;
-			if (Slot != ESnapSlot::None)
+			const UConstructionAsset* ConstructionAsset = CurrentObject->GetAsset<UConstructionAsset>();
+			if (Slot != ESnapSlot::None && ConstructionAsset && ConstructionAsset->SnappableSlots.Contains(Slot))
 			{
 				Transform.SetLocation(SlotLocation);
 			}

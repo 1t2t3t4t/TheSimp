@@ -13,8 +13,9 @@ ASimpObject::ASimpObject()
 	RootComponent = StaticMeshComponent;
 }
 
-void ASimpObject::Init(const UBaseBuildingAsset* Asset) const
+void ASimpObject::Init(UBaseBuildingAsset* Asset)
 {
+	AssignedAsset = Asset;
 	UStaticMesh* LoadedMesh = Asset->Mesh.LoadSynchronous();
 	if (LoadedMesh)
 	{

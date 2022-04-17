@@ -17,14 +17,23 @@ public:
 	// Sets default values for this actor's properties
 	ASimpObject();
 
-	void Init(const UBaseBuildingAsset* Asset) const;
+	void Init(UBaseBuildingAsset* Asset);
 	void SetMaterial(const UMaterialAsset* Material) const;
 
 	UStaticMeshComponent* GetMesh() const { return StaticMeshComponent; }
 	
+	template<class TAsset>
+	TAsset* GetAsset() const
+	{
+		return Cast<TAsset>(AssignedAsset);
+	}
+	
 private:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* StaticMeshComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	UBaseBuildingAsset* AssignedAsset;
 
 protected:
 	// Called when the game starts or when spawned
