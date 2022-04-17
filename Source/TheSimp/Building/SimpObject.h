@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "BaseBuildingAsset.h"
 #include "GameFramework/Actor.h"
+#include "TheSimp/MaterialAsset.h"
 #include "SimpObject.generated.h"
 
 UCLASS()
@@ -16,8 +17,9 @@ public:
 	// Sets default values for this actor's properties
 	ASimpObject();
 
-	void Init(const UBaseBuildingAsset* Asset) const; 
-
+	void Init(const UBaseBuildingAsset* Asset) const;
+	void SetMaterial(const UMaterialAsset* Material) const;
+	
 private:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* StaticMeshComponent;

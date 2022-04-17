@@ -21,6 +21,17 @@ void ASimpObject::Init(const UBaseBuildingAsset* Asset) const
 	}
 }
 
+void ASimpObject::SetMaterial(const UMaterialAsset* Material) const
+{
+	if (StaticMeshComponent)
+	{
+		for (int32 i = 0; i < StaticMeshComponent->GetNumMaterials(); i++)
+		{
+			StaticMeshComponent->SetMaterial(i, Material->Material);
+		}
+	}
+}
+
 // Called when the game starts or when spawned
 void ASimpObject::BeginPlay()
 {

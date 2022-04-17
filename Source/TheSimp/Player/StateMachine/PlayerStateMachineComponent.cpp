@@ -76,9 +76,13 @@ void UPlayerStateMachineComponent::UpdateState()
 		PlayerController->HideBuildWidget();
 		break;
 	case EPlayerMode::Build:
-		CurrentState = NewObject<UBuildState>();
-		PlayerController->ShowBuildWidget();
-		break;
+		{
+			UBuildState* NewState = NewObject<UBuildState>();
+			NewState->SetOwner(GetOwner());
+			CurrentState = NewState;
+			PlayerController->ShowBuildWidget();
+			break;
+		}
 	default: ;
 	}
 

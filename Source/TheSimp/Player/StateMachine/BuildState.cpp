@@ -2,6 +2,7 @@
 
 #include "Engine/AssetManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "TheSimp/MaterialAsset.h"
 #include "TheSimp/Building/ConstructionAsset.h"
 #include "TheSimp/Building/SimpObject.h"
 
@@ -10,7 +11,10 @@ void UBuildState::Begin()
 	UAssetManager& AssetManager = UAssetManager::Get();
 	TArray<FPrimaryAssetId> Ids;
 	AssetManager.GetPrimaryAssetIdList(TEXT("Construction"), Ids);
+	AssetManager.GetPrimaryAssetIdList(UMaterialAsset::AssetType, Ids);
+
 	UE_LOG(LogTemp, Warning, TEXT("Assets %d"), Ids.Num());
+	
 	const FStreamableDelegate Delegate = FStreamableDelegate::CreateUObject(this, &UBuildState::OnAssetLoaded);
 	AssetManager.LoadPrimaryAssets(Ids, {}, Delegate);
 }
@@ -34,6 +38,14 @@ void UBuildState::Click(const FHitResult Result, const FPlayerContext Context, c
 			Trans.SetLocation(Result.ImpactPoint + Result.ImpactNormal);
 			const ASimpObject* Object = Cast<ASimpObject>(Command->SpawnActor(ASimpObject::StaticClass(), Trans));
 			Object->Init(Asset);
+			
+			TArray<UObject*> Mats;
+			AssetManager.GetPrimaryAssetObjectList(UMaterialAsset::AssetType, Mats);
+			
+			if (const UMaterialAsset* Mat = Cast<UMaterialAsset>(Mats[0]))
+			{
+				Object->SetMaterial(Mat);
+			}
 		}
 	}
 }
