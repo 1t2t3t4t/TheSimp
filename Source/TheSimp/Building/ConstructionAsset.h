@@ -20,6 +20,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<ESnapSlot> SnappableSlots = { ESnapSlot::None };
+
+	UPROPERTY(EditDefaultsOnly)
+	TSoftObjectPtr<UTexture2D> Preview;
 	
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override
 	{

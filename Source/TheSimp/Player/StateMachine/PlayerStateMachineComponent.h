@@ -31,7 +31,7 @@ protected:
 	EPlayerMode GetCurrentPlayerMode() const;
 
 public:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Transient)
 	TScriptInterface<IPlayerStateHandler> CurrentState;
 	
 	// Called every frame

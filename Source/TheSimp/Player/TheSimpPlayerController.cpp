@@ -4,6 +4,7 @@
 #include "TheSimpPlayerController.h"
 
 #include "Blueprint/UserWidget.h"
+#include "TheSimp/UI/ScrollSlotWidget.h"
 
 
 // Sets default values
@@ -28,6 +29,17 @@ void ATheSimpPlayerController::Tick(float DeltaTime)
 }
 
 #pragma region UI Handle
+
+UScrollSlotWidget* ATheSimpPlayerController::GetBuildModeScrollSlotWidget() const
+{
+	if (!BuildModeWidget)
+	{
+		return nullptr;
+	}
+	
+	UWidget* ScrollSlot = BuildModeWidget->GetWidgetFromName(TEXT("ScrollSlot"));
+	return Cast<UScrollSlotWidget>(ScrollSlot);
+}
 
 void ATheSimpPlayerController::ShowBuildWidget()
 {

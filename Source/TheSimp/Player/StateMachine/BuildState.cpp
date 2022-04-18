@@ -40,6 +40,32 @@ void UBuildState::OnAssetLoaded()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Asset Loaded"));
 	bIsAssetLoaded = true;
+	
+	const UAssetManager& AssetManager = UAssetManager::Get();
+	TArray<UObject*> Objs;
+	TArray<FScrollSlotItem> Items;
+	const bool bFound = AssetManager.GetPrimaryAssetObjectList(UConstructionAsset::AssetType, Objs);
+	if (Objs.Num() >= 1 && bFound)
+	{
+		if (const UConstructionAsset* Asset = Cast<UConstructionAsset>(Objs[0]))
+		{
+			FScrollSlotItem Item;
+			Item.Text = FText::FromString(Asset->Name);
+			Item.Image = Asset->Preview.LoadSynchronous();
+			Items.Add(Item);
+		}
+	}
+
+	if (const APawn* Pawn = Cast<APawn>(Owner))
+	{
+		if (const ATheSimpPlayerController* Controller = Cast<ATheSimpPlayerController>(Pawn->GetController()))
+		{
+			if (Controller->GetBuildModeScrollSlotWidget())
+			{
+				Controller->GetBuildModeScrollSlotWidget()->SetItems(Items);
+			}
+		}
+	}
 }
 
 ASimpObject* UBuildState::SpawnObjectIfNeeded(const IStateCommand* Command, int32 Idx, const FTransform Location) const

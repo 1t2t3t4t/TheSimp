@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TheSimp/UI/ScrollSlotWidget.h"
 #include "TheSimpPlayerController.generated.h"
 
 UCLASS()
@@ -27,7 +28,9 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
+
 	void ShowBuildWidget();
 	void HideBuildWidget() const;
+	
+	UScrollSlotWidget* GetBuildModeScrollSlotWidget() const;
 };
