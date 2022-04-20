@@ -178,7 +178,7 @@ void UBuildState::UpdateTransform()
 								{
 									FRotator Rot(0, 90, 0);
 									Transform.SetRotation(Rot.Quaternion());
-									SlotLocation.X += MeshSize.Y;
+									SlotLocation.X += MeshSize.Y - MeshSize.X;
 									SlotLocation.Y -= MeshSize.Y;
 									break;
 								}
