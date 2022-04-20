@@ -47,6 +47,8 @@ void UBuildState::End()
 	AssetManager.UnloadPrimaryAssets(Ids);
 }
 
+#pragma region Asset
+
 void UBuildState::OnAssetLoaded()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Asset Loaded"));
@@ -58,12 +60,14 @@ void UBuildState::OnAssetLoaded()
 	const bool bFound = AssetManager.GetPrimaryAssetObjectList(UConstructionAsset::AssetType, Objs);
 	if (Objs.Num() >= 1 && bFound)
 	{
-		if (const UConstructionAsset* Asset = Cast<UConstructionAsset>(Objs[0]))
+		if (UConstructionAsset* Asset = Cast<UConstructionAsset>(Objs[0]))
 		{
 			FScrollSlotItem Item;
 			Item.Text = FText::FromString(Asset->Name);
 			Item.Image = Asset->Preview.LoadSynchronous();
 			Items.Add(Item);
+
+			Constructions.Add(Asset);
 		}
 	}
 
@@ -85,20 +89,15 @@ ASimpObject* UBuildState::SpawnObjectIfNeeded(const IStateCommand* Command, int3
 	{
 		return nullptr;
 	}
-	const UAssetManager& AssetManager = UAssetManager::Get();
-	TArray<UObject*> Objs;
-	const bool bFound = AssetManager.GetPrimaryAssetObjectList(UConstructionAsset::AssetType, Objs);
-	if (Objs.Num() >= 1 && bFound)
+	if (Idx >= Constructions.Num())
 	{
-		if (UConstructionAsset* Asset = Cast<UConstructionAsset>(Objs[0]))
-		{
-			ASimpObject* Object = Cast<ASimpObject>(Command->SpawnActor(ASimpObject::StaticClass(), Location));
-			Object->Init(Asset);
-			return Object;
-		}
+		return nullptr;
 	}
 
-	return nullptr;
+	const auto Asset = Constructions[Idx];
+	ASimpObject* Object = Cast<ASimpObject>(Command->SpawnActor(ASimpObject::StaticClass(), Location));
+	Object->Init(Asset);
+	return Object;
 }
 
 UMaterialAsset* UBuildState::GetBuildMaterial(const bool bIsValid) const
@@ -134,6 +133,8 @@ UMaterialAsset* UBuildState::GetBuildMaterial(const bool bIsValid) const
 
 	return nullptr;
 }
+
+#pragma endregion 
 
 void UBuildState::UpdateTransform()
 {
@@ -237,7 +238,13 @@ void UBuildState::InteractWorld(const FHitResult Result, const FPlayerContext Co
 
 void UBuildState::OnSlotClicked(const int32 Index)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Selected %d"), Index);
+	if (Index >= Constructions.Num())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Selected OOB index!! %d has only %d"), Index, Constructions.Num());
+	}
+	
+	const UConstructionAsset* Construction = Constructions[Index];
+	UE_LOG(LogTemp, Warning, TEXT("Selected %s"), *Construction->GetName());
 }
 
 #pragma endregion 

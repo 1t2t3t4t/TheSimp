@@ -30,8 +30,11 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	ASimpObject* CurrentObject;
 
-	UPROPERTY()
+	UPROPERTY(Transient)
 	AActor* Owner;
+
+	UPROPERTY(Transient)
+	TArray<class UConstructionAsset*> Constructions;
 
 	bool bIsInvalid = false;
 	bool bIsAssetLoaded = false;
