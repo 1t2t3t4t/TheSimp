@@ -19,17 +19,6 @@ void UBuildState::Begin()
 
 	const FStreamableDelegate Delegate = FStreamableDelegate::CreateUObject(this, &UBuildState::OnAssetLoaded);
 	AssetManager.LoadPrimaryAssets(Ids, {}, Delegate);
-
-	if (const APawn* OwnerAsPawn = Cast<APawn>(Owner))
-	{
-		if (const ATheSimpPlayerController* Controller = Cast<ATheSimpPlayerController>(OwnerAsPawn->GetController()))
-		{
-			if (UScrollSlotWidget* Widget = Cast<UScrollSlotWidget>(Controller->GetBuildModeScrollSlotWidget()))
-			{
-				Widget->OnSlotClicked.AddUObject(this, &UBuildState::OnSlotClicked);
-			}
-		}
-	}
 }
 
 void UBuildState::End()
@@ -60,14 +49,17 @@ void UBuildState::OnAssetLoaded()
 	const bool bFound = AssetManager.GetPrimaryAssetObjectList(UConstructionAsset::AssetType, Objs);
 	if (Objs.Num() >= 1 && bFound)
 	{
-		if (UConstructionAsset* Asset = Cast<UConstructionAsset>(Objs[0]))
+		for (const auto Obj : Objs)
 		{
-			FScrollSlotItem Item;
-			Item.Text = FText::FromString(Asset->Name);
-			Item.Image = Asset->Preview.LoadSynchronous();
-			Items.Add(Item);
+			if (UConstructionAsset* Asset = Cast<UConstructionAsset>(Obj))
+			{
+				FScrollSlotItem Item;
+				Item.Text = FText::FromString(Asset->Name);
+				Item.Image = Asset->Preview.LoadSynchronous();
+				Items.Add(Item);
 
-			Constructions.Add(Asset);
+				Constructions.Add(Asset);
+			}
 		}
 	}
 
@@ -78,6 +70,7 @@ void UBuildState::OnAssetLoaded()
 			if (Controller->GetBuildModeScrollSlotWidget())
 			{
 				Controller->GetBuildModeScrollSlotWidget()->SetItems(Items);
+				Controller->GetBuildModeScrollSlotWidget()->OnSlotClicked.AddUObject(this, &UBuildState::OnSlotClicked);
 			}
 		}
 	}
@@ -188,7 +181,7 @@ void UBuildState::Tick(const float DeltaTime, const IStateCommand* Command)
 	}
 	if (!CurrentObject)
 	{
-		CurrentObject = SpawnObjectIfNeeded(Command, 0, CurrentTransform);
+		CurrentObject = SpawnObjectIfNeeded(Command, CurrentIndex, CurrentTransform);
 		CurrentObject->GetMesh()->SetGenerateOverlapEvents(true);
 		CurrentObject->GetMesh()->SetCollisionProfileName("OverlapAll");
 		if (const UMaterialAsset* Mat = GetBuildMaterial(true))
@@ -223,7 +216,7 @@ void UBuildState::Click(const FHitResult Result, const FPlayerContext Context, c
 		CurrentObject = nullptr;
 	}
 
-	SpawnObjectIfNeeded(Command, 0, CurrentTransform);
+	SpawnObjectIfNeeded(Command, CurrentIndex, CurrentTransform);
 }
 
 void UBuildState::InteractWorld(const FHitResult Result, const FPlayerContext Context, const IStateCommand* Command)
@@ -242,9 +235,10 @@ void UBuildState::OnSlotClicked(const int32 Index)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Selected OOB index!! %d has only %d"), Index, Constructions.Num());
 	}
-	
-	const UConstructionAsset* Construction = Constructions[Index];
-	UE_LOG(LogTemp, Warning, TEXT("Selected %s"), *Construction->GetName());
+
+	CurrentIndex = Index;
+	CurrentObject->Destroy();
+	CurrentObject = nullptr;
 }
 
 #pragma endregion 

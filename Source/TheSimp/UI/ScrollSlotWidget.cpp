@@ -13,10 +13,10 @@ void UScrollSlotWidget::SetItems(const TArray<FScrollSlotItem> Items) const
 	for (const auto Item : Items)
 	{
 		const auto Widget = CreateWidget<UObjectSlot>(GetOwningPlayer(), ObjectSlotClass);
-		Widget->Set(Item.Text, Item.Image, Row);
+		Widget->Set(Item.Text, Item.Image, Column);
 		SlotPanel->AddChildToGrid(Widget, Row, Column);
 		Widget->OnClicked.AddUObject(this, &UScrollSlotWidget::OnClicked);
-		Row++;
+		Column++;
 	}
 }
 

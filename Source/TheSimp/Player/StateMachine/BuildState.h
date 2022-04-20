@@ -38,6 +38,7 @@ private:
 
 	bool bIsInvalid = false;
 	bool bIsAssetLoaded = false;
+	int32 CurrentIndex = 0;
 
 	void OnSlotClicked(int32 Index);
 
