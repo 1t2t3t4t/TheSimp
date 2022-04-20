@@ -19,12 +19,16 @@ struct FScrollSlotItem
 	UTexture2D* Image;
 };
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSlotClickedEvent, const int32);
+
 UCLASS(Abstract)
 class THESIMP_API UScrollSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
+	FOnSlotClickedEvent OnSlotClicked;
+	
 	void SetItems(const TArray<FScrollSlotItem> Items) const;
 	
 private:
@@ -35,4 +39,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UObjectSlot> ObjectSlotClass;
+
+	UFUNCTION()
+	void OnClicked(const int32 Index) const;
 };

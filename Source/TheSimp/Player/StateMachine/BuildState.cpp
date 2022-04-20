@@ -19,6 +19,17 @@ void UBuildState::Begin()
 
 	const FStreamableDelegate Delegate = FStreamableDelegate::CreateUObject(this, &UBuildState::OnAssetLoaded);
 	AssetManager.LoadPrimaryAssets(Ids, {}, Delegate);
+
+	if (const APawn* OwnerAsPawn = Cast<APawn>(Owner))
+	{
+		if (const ATheSimpPlayerController* Controller = Cast<ATheSimpPlayerController>(OwnerAsPawn->GetController()))
+		{
+			if (UScrollSlotWidget* Widget = Cast<UScrollSlotWidget>(Controller->GetBuildModeScrollSlotWidget()))
+			{
+				Widget->OnSlotClicked.AddUObject(this, &UBuildState::OnSlotClicked);
+			}
+		}
+	}
 }
 
 void UBuildState::End()
@@ -221,3 +232,12 @@ void UBuildState::InteractWorld(const FHitResult Result, const FPlayerContext Co
 		Object->Destroy();
 	}
 }
+
+#pragma region UI Interaction
+
+void UBuildState::OnSlotClicked(const int32 Index)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Selected %d"), Index);
+}
+
+#pragma endregion 
