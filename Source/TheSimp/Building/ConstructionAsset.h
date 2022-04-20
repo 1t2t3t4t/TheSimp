@@ -7,6 +7,13 @@
 #include "TheSimp/Player/StateMachine/SnappingHelper.h"
 #include "ConstructionAsset.generated.h"
 
+UENUM()
+enum class EAnchor : uint8
+{
+	BottomRight,
+	BottomLeft
+};
+
 /**
  * 
  */
@@ -23,9 +30,17 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSoftObjectPtr<UTexture2D> Preview;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<UConstructionAsset*> RotateAgainst;
+
+	UPROPERTY(EditDefaultsOnly)
+	EAnchor AnchorPoint;
 	
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override
 	{
 		return FPrimaryAssetId(AssetType, GetFName());
 	}
+
+	bool ShouldRotateAgainst(const UConstructionAsset* Target) const;
 };

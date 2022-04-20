@@ -6,7 +6,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "TheSimp/Building/SimpObject.h"
 
-static constexpr float SnapOffset = 0.1;
+static constexpr float SnapOffset = 0.7;
 
 FHitResult FindMinDist(const TArray<FHitResult>& Results, const FVector Location)
 {
@@ -26,7 +26,7 @@ FHitResult FindMinDist(const TArray<FHitResult>& Results, const FVector Location
 }
 
 ESnapSlot FSnappingHelper::CheckSnap(const TArray<FHitResult> OverlapInfos, const FVector Location,
-                                     const FVector MeshSize, FVector& Out)
+                                     const FVector MeshSize, FVector& Out, FHitResult& HitDetect)
 {
 	const TArray<FHitResult> Results = OverlapInfos.FilterByPredicate([](const FHitResult& Info) -> bool
 	{
@@ -38,19 +38,20 @@ ESnapSlot FSnappingHelper::CheckSnap(const TArray<FHitResult> OverlapInfos, cons
 	}
 
 	const FHitResult Result = FindMinDist(Results, Location);
-	const ASimpObject* Object = Cast<ASimpObject>(Result.GetActor());
+	HitDetect = Result;
+	const ASimpObject* HitObject = Cast<ASimpObject>(Result.GetActor());
 	const FVector LocalToObjectLocation = UKismetMathLibrary::InverseTransformLocation(
-		Object->GetActorTransform(), Location);
-	const FVector ObjectSize = Object->GetMesh()->Bounds.GetBox().GetSize();
+		HitObject->GetActorTransform(), Location);
+	const FVector HitObjectSize = HitObject->GetMesh()->Bounds.GetBox().GetSize();
 
-	Out = Object->GetActorLocation();
+	Out = HitObject->GetActorLocation();
 
 	if (LocalToObjectLocation.X <= 0)
 	{
-		Out.X -= ObjectSize.X + SnapOffset;
+		Out.X -= HitObjectSize.X + SnapOffset;
 		return ESnapSlot::Below;
 	}
-	if (LocalToObjectLocation.X >= ObjectSize.X)
+	if (LocalToObjectLocation.X >= HitObjectSize.X)
 	{
 		Out.X += MeshSize.X + SnapOffset;
 		return ESnapSlot::Above;
@@ -60,9 +61,9 @@ ESnapSlot FSnappingHelper::CheckSnap(const TArray<FHitResult> OverlapInfos, cons
 		Out.Y += MeshSize.Y + SnapOffset;
 		return ESnapSlot::Right;
 	}
-	if (LocalToObjectLocation.Y <= -ObjectSize.Y)
+	if (LocalToObjectLocation.Y <= -HitObjectSize.Y)
 	{
-		Out.Y -= ObjectSize.Y + SnapOffset;
+		Out.Y -= HitObjectSize.Y + SnapOffset;
 		return ESnapSlot::Left;
 	}
 

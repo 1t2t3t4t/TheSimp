@@ -21,5 +21,6 @@ enum class ESnapSlot : uint8
 class THESIMP_API FSnappingHelper
 {
 public:
-    static ESnapSlot CheckSnap(const TArray<FHitResult> OverlapInfos, const FVector Location, const FVector MeshSize, FVector& Out);
+    static ESnapSlot CheckSnap(const TArray<FHitResult> OverlapInfos, const FVector Location, const FVector MeshSize, FVector& Out, FHitResult&
+                               HitDetect);
 };

@@ -150,14 +150,50 @@ void UBuildState::UpdateTransform()
 			                                                 HitResults, true);
 
 			FVector SlotLocation;
+			FHitResult HitDetectChoose;
+			const auto MeshSize = CurrentObject->GetMesh()->Bounds.GetBox().GetSize(); 
 			const ESnapSlot Slot = FSnappingHelper::CheckSnap(HitResults, Result.ImpactPoint,
-			                                                  CurrentObject->GetMesh()->Bounds.GetBox().GetSize(),
-			                                                  SlotLocation);
+			                                                  MeshSize, SlotLocation, HitDetectChoose);
 
 			FTransform Transform;
 			const UConstructionAsset* ConstructionAsset = CurrentObject->GetAsset<UConstructionAsset>();
 			if (Slot != ESnapSlot::None && ConstructionAsset && ConstructionAsset->SnappableSlots.Contains(Slot))
 			{
+				if (const ASimpObject* Obj = Cast<ASimpObject>(HitDetectChoose.GetActor()))
+				{
+					if (const auto HitConstruction = Obj->GetAsset<UConstructionAsset>())
+					{
+						if (ConstructionAsset->ShouldRotateAgainst(HitConstruction))
+						{
+							switch (Slot)
+							{
+							case ESnapSlot::Above:
+								{
+									FRotator Rot(0, -90, 0);
+									Transform.SetRotation(Rot.Quaternion());
+									SlotLocation.X += MeshSize.Y;
+									break;
+								}
+							case ESnapSlot::Below:
+								{
+									FRotator Rot(0, 90, 0);
+									Transform.SetRotation(Rot.Quaternion());
+									SlotLocation.X += MeshSize.Y;
+									SlotLocation.Y -= MeshSize.Y;
+									break;
+								}
+							default:
+								break;
+							}
+						}
+
+						if (ConstructionAsset->AnchorPoint == EAnchor::BottomLeft && Slot == ESnapSlot::Left)
+						{
+							SlotLocation.Y -= MeshSize.Y;
+						}
+					}
+				}
+
 				Transform.SetLocation(SlotLocation);
 			}
 			else
