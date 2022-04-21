@@ -3,6 +3,8 @@
 
 #include "Simp.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
+
 // Sets default values
 ASimp::ASimp()
 {
@@ -14,6 +16,12 @@ ASimp::ASimp()
 void ASimp::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+float ASimp::GetSpeedPerc() const
+{
+	const UCharacterMovementComponent* Movement = GetCharacterMovement();
+	return GetVelocity().Size() / Movement->MaxWalkSpeed;
 }
 
 // Called every frame
