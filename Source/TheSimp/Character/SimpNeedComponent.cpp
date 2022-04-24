@@ -11,15 +11,13 @@ USimpNeedComponent::USimpNeedComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.TickInterval = 1.0f;
-	
-	Needs = NewObject<USimpNeed>();
 }
 
 // Called when the game starts
 void USimpNeedComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	Needs = NewObject<USimpNeed>();
 	GetWorld()->GetTimerManager().SetTimer(NeedsReductionHandle, this, &USimpNeedComponent::NeedsReducer, StatsReductionRate, true);
 }
 

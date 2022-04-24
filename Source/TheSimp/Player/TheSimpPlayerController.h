@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TheSimp/Character/Simp.h"
 #include "TheSimp/UI/ScrollSlotWidget.h"
+#include "TheSimp/UI/UserHudWidget.h"
 #include "TheSimpPlayerController.generated.h"
 
 UCLASS()
@@ -17,6 +19,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category="UI")
 	UUserWidget* BuildModeWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	TSubclassOf<UUserHudWidget> UserHudClass;
+
+	UPROPERTY(VisibleAnywhere, Category="UI")
+	UUserHudWidget* UserHud;
 	
 	// Sets default values for this actor's properties
 	ATheSimpPlayerController();
@@ -32,5 +40,10 @@ public:
 	void ShowBuildWidget();
 	void HideBuildWidget() const;
 	
+	void ShowHudWidget();
+	void HideHudWidget() const;
+
 	UScrollSlotWidget* GetBuildModeScrollSlotWidget() const;
+
+	ASimp* GetControlledSimp() const;
 };

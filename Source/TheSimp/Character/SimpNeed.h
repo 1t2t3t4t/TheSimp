@@ -16,7 +16,7 @@ class THESIMP_API USimpNeed : public UObject
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Hunger = 50.f;
+	float Hunger = 100.f;
 
 	FString ToString() const;
 };
