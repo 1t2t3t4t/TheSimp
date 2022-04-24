@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "Simp.generated.h"
 
+class USimpNeed;
+class USimpNeedComponent;
+
 UCLASS()
 class THESIMP_API ASimp : public ACharacter
 {
@@ -22,7 +25,14 @@ protected:
 public:
 	UFUNCTION(BlueprintPure)
 	float GetSpeedPerc() const;
+
+	UFUNCTION(BlueprintPure)
+	USimpNeed* GetNeeds() const;
 	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+private:
+	UPROPERTY(VisibleAnywhere)
+	USimpNeedComponent* NeedsComponent;
 };
