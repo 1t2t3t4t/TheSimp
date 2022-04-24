@@ -4,6 +4,8 @@
 #include "SimpNeedComponent.h"
 
 #include "SimpNeed.h"
+#include "Kismet/GameplayStatics.h"
+#include "TheSimp/TheSimpGameModeBase.h"
 
 static constexpr float StatsReductionRate = 0.5f;
 
@@ -35,7 +37,11 @@ void USimpNeedComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void USimpNeedComponent::NeedsReducer()
 {
-	if (Needs)
+	if (!GetGameMode())
+	{
+		return;
+	}
+	if (Needs && GetGameMode()->GetCurrentMode() == EPlayerMode::Play)
 	{
 		Needs->Hunger -= 0.3f;
 	}
@@ -46,3 +52,7 @@ USimpNeed* USimpNeedComponent::GetNeeds() const
 	return Needs;
 }
 
+ATheSimpGameModeBase* USimpNeedComponent::GetGameMode() const
+{
+	return Cast<ATheSimpGameModeBase>(UGameplayStatics::GetGameMode(this));
+}

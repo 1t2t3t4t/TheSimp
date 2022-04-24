@@ -19,6 +19,12 @@ class THESIMP_API ATheSimpGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
+public:
+	EPlayerMode GetCurrentMode() const
+	{
+		return CurrentMode;
+	}
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	EPlayerMode CurrentMode;

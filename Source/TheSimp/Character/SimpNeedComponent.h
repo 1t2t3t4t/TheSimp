@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "TheSimp/TheSimpGameModeBase.h"
 #include "SimpNeedComponent.generated.h"
 
 class USimpNeed;
@@ -28,7 +29,8 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	USimpNeed* GetNeeds() const;
-	
+	ATheSimpGameModeBase* GetGameMode() const;
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	USimpNeed* Needs;
